@@ -21,6 +21,12 @@ static int op_equal(struct tokenStack *stack);
 static int op_MOD(struct tokenStack *stack);/* - push two copies of n1 onto the stack */
 static int op_SWAP(struct tokenStack *stack);
 static int op_HELP(struct tokenStack *stack);
+static int op_if(struct tokenStack *stack);
+static int op_drop(struct tokenStack *stack);
+static int op_rot(struct tokenStack *stack);
+static int op_rotminus(struct tokenStack *stack);
+
+
 
 static struct operator_struct {
   char *name;
@@ -47,7 +53,11 @@ ops[] = {
   {"MOD", op_MOD},
   {"EQ", op_equal},
   {"SWAP", op_SWAP},
+  {"IF", op_if},
+  {"DROP",op_drop},
   {"HELP", op_HELP},
+  {"ROT", op_rot},
+  {"ROTMINUS", op_rotminus},
 
   {(char *)NULL, (int(*)(struct tokenStack *)) NULL}
 };
@@ -149,6 +159,10 @@ static int op_HELP(struct tokenStack *stack)
    printf("MOD - push two copies of n1 onto the stack\n");
    printf("MODQ - push remainder then quotient \n");
    printf("SWAP -  swap the order of the top two elements on the stack \n");
+   printf("HELP(—)-print out all commands plus a line of documentation This is made easier due to the help string in the table\n");
+   printf("ROT (n1 n2 n3 — n2 n3 n1) - rotate top 3 elements on the stack\n");
+   printf("DROP (n1 — ) - drop the top element off of the stack\n");
+   printf("S (—) - print all elements on the stack non destructively\n");
    return (0);
 }
 static int op_subtract(struct tokenStack *stack)
@@ -159,6 +173,7 @@ static int op_subtract(struct tokenStack *stack)
   pushInt(stack, v2-v1);
   return(0);
 }
+
 static int op_multiply(struct tokenStack *stack)
 {
   int v1, v2;
@@ -168,13 +183,15 @@ static int op_multiply(struct tokenStack *stack)
   return(0);
 }
 
-static int op_divide(struct tokenStack *stack)
-{
-  int v1, v2;
-  v1 = popInt(stack);
-  v2 = popInt(stack);
-  pushInt(stack, v2/v1);
-  return(0);
+static int op_divide(struct tokenStack *stack) {
+	int v1, v2;
+	v1 = popInt(stack);
+	v2 = popInt(stack);
+	if(v2== 0){
+	printf("its 0 to become divider");	
+	}else{
+	pushInt(stack, v2/v1);}
+	return 0;
 }
 
 static int op_GThan(struct tokenStack *stack)
@@ -277,4 +294,46 @@ static int op_SWAP(struct tokenStack *stack)
   pushInt(stack, v1);
   pushInt(stack, v2);
   return(0);
+}
+
+static int op_if(struct tokenStack *stack) {
+	int v1, v2, v;
+	v = popInt(stack);
+	v2 = popInt(stack);
+	v1 = popInt(stack);
+	if (v != 0) pushInt(stack, v1);
+	else pushInt(stack, v2);
+	return 0;
+}
+
+static int op_drop(struct tokenStack *stack) {
+	int v1;
+	v1=popInt(stack);
+	return 0;
+}
+
+static int op_rot(struct tokenStack *stack) {
+        int v1;
+        int v2;
+	int v3;
+        v1 = popInt(stack);
+        v2 = popInt(stack);
+	v3 = popInt(stack);
+        pushInt(stack, v2);
+        pushInt(stack, v1);
+	pushInt(stack, v3);
+        return 0;
+}
+
+static int op_rotminus(struct tokenStack *stack) {
+        int v1;
+        int v2;
+        int v3;
+        v1 = popInt(stack);
+        v2 = popInt(stack);
+        v3 = popInt(stack);
+        pushInt(stack, v1);
+        pushInt(stack, v3);
+        pushInt(stack, v2);
+        return 0;
 }
