@@ -31,13 +31,8 @@ static int op_rotminus(struct tokenStack *stack);
 static struct operator_struct {
   char *name;
   int (*fn_ptr)(struct tokenStack *);
-<<<<<<< HEAD
-}
- ops[] = {
-=======
-} 
-ops[] = {
->>>>>>> 3db415cf4994913f2ad060d210352fed3d480877
+} ops[] = {
+
   {"quit", op_quit},
   {"print", op_print},
   {"dump", op_dump},
